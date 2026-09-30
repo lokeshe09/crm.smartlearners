@@ -1,0 +1,5 @@
+{
+  "name": "Smartlearners.ai CRM",
+  "description": "Smartlearners.ai CRM platform for schools and teachers with analytics and exam tracking",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

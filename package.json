@@ -27,9 +27,11 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "PORT=3000 HOST=0.0.0.0 react-scripts start",
+    "start": "PORT=3000 HOST=0.0.0.0 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "lint": "tsc --noEmit",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

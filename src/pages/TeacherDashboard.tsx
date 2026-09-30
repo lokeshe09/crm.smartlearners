@@ -22,7 +22,7 @@ import T from '../theme/tokens';
 
 const FONT = T.font.sans;
 const FONT_SERIF = T.font.display;
-const LOADING_SCREEN_MIN_MS = 5500;
+const LOADING_SCREEN_MIN_MS = 300;
 
 const C = {
   bg: T.surface.canvas, cardBg: T.color.neutral[0], cardAlt: T.color.neutral[50],
@@ -567,48 +567,7 @@ const TeacherDashboard: React.FC = () => {
   const displayName = user?.full_name || user?.username || 'Teacher';
   const initials = displayName.split(/\s+|@/).filter(Boolean).slice(0, 2).map((w: string) => w[0].toUpperCase()).join('');
 
-  useEffect(() => {
-    if (!showGreeting) return;
-    const t = setTimeout(() => setShowGreeting(false), 2000);
-    return () => clearTimeout(t);
-  }, [showGreeting]);
 
-  if (showGreeting) {
-    return (
-      <div style={{
-        minHeight: 'calc(100vh - 64px)',
-        background: `radial-gradient(900px 500px at 50% -10%, ${T.color.brand[100]}, transparent 60%), ${T.surface.canvas}`,
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-        paddingTop: '80px', fontFamily: FONT,
-      }}>
-        <div style={{
-          background: C.card, borderRadius: 24, border: `1px solid ${C.border}`,
-          boxShadow: T.shadow.xl, padding: '52px 56px', textAlign: 'center',
-          maxWidth: 480, width: '100%',
-          animation: `rise-in 0.5s ${T.motion.ease.spring} both`,
-        }}>
-          <div style={{
-            width: 76, height: 76, borderRadius: 22, margin: '0 auto 24px',
-            background: `linear-gradient(135deg, ${T.color.brand[600]}, ${T.color.brand[700]})`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 26, fontWeight: 800, color: '#fff', letterSpacing: '-0.01em',
-            boxShadow: `0 0 0 8px ${T.color.brand.tint}, ${T.shadow.brand}`,
-          }}>
-            {initials}
-          </div>
-          <div style={{ fontSize: 13, color: C.textMuted, fontWeight: 600, marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-            {greeting}
-          </div>
-          <div style={{ fontSize: 30, fontWeight: 600, color: C.text, fontFamily: FONT_SERIF, lineHeight: 1.15, marginBottom: 12, letterSpacing: '-0.02em' }}>
-            {displayName}
-          </div>
-          <div style={{ fontSize: 14, color: C.textSecondary, fontWeight: 500, lineHeight: 1.6 }}>
-            Your dashboard is ready. Let’s make today count.
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return <SmartLoadingScreen durationMs={LOADING_SCREEN_MIN_MS} />;
@@ -659,12 +618,31 @@ const TeacherDashboard: React.FC = () => {
 
 
   const navSections = [
-    { title: 'Overview', items: [{ key: 'analytics' as const, label: 'Analytics', icon: 'bar' }] },
     {
-      title: 'Assessments',
+      title: 'Performance & Insights',
+      items: [
+        { key: 'analytics' as const, label: 'Class Performance', icon: 'bar' },
+        { key: 'track-status' as const, label: 'Topic Mastery Track', icon: 'target' },
+        { key: 'activity' as const, label: 'Learning Activity', icon: 'activity' },
+      ],
+    },
+    {
+      title: 'Exams & Evaluations',
       items: [
         { key: 'exam-correction' as const, label: 'Exam Correction', icon: 'file' },
-        { key: 'worksheet-progress' as const, label: 'Worksheet Progress', icon: 'grid' },
+        { key: 'worksheet-progress' as const, label: 'Remedial Worksheets', icon: 'grid' },
+        { key: 'mock-exams' as const, label: 'Mock Exam Scores', icon: 'sparkle' },
+        { key: 'mock-exam-analysis' as const, label: 'Diagnostic Analysis', icon: 'pie' },
+        { key: 'compare-mock-exams' as const, label: 'Compare Exams', icon: 'trending' },
+      ],
+    },
+    {
+      title: 'Students & Coursework',
+      items: [
+        { key: 'students' as const, label: 'Student Directory', icon: 'users' },
+        { key: 'assignments' as const, label: 'Scheduled Homework', icon: 'calendar' },
+        { key: 'daily-quizzes' as const, label: 'Daily MCQ Quizzes', icon: 'quiz' },
+        { key: 'pre-assessment' as const, label: 'Spot Check (Prep)', icon: 'check' },
       ],
     },
   ];
@@ -688,39 +666,44 @@ const TeacherDashboard: React.FC = () => {
   };
 
   const sectionTitles: Record<typeof activeTab, string> = {
-    'analytics': 'Analytics',
-    'track-status': 'Track Status',
-    'assignments': 'Scheduled Assignments',
-    'students': 'Students', 'daily-quizzes': 'Daily Quizzes',
-    'exam-correction': 'Exam Correction', 'worksheet-progress': 'Worksheet Progress', 'mock-exams': 'Mock Exams', 'mock-exam-analysis': 'Mock Exam Analysis', 'compare-mock-exams': 'Compare Mock Exams', 'jee-exams': 'JEE Format',
-    'pre-assessment': 'Pre-Assessment', 'activity': 'Activity',
+    'analytics': 'Class Performance Analytics',
+    'track-status': 'Topic Mastery Track',
+    'assignments': 'Scheduled Homework & Assignments',
+    'students': 'Student Directory',
+    'daily-quizzes': 'Daily MCQ Quizzes',
+    'exam-correction': 'Exam Correction & Evaluation',
+    'worksheet-progress': 'Remedial Worksheet Progress',
+    'mock-exams': 'Mock Exam Results & Rosters',
+    'mock-exam-analysis': 'Mock Exam Diagnostic Analysis',
+    'compare-mock-exams': 'Exam Comparison Matrix',
+    'jee-exams': 'JEE Format',
+    'pre-assessment': 'Spot Check & Diagnostic Records',
+    'activity': 'Learning Activity Feed',
   };
 
   const teacherName = user?.full_name || user?.username || 'Teacher';
   const hourNow = new Date().getHours();
   const greetingText = hourNow < 12 ? 'Good morning' : hourNow < 17 ? 'Good afternoon' : 'Good evening';
+  const formattedToday = new Date().toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+  });
 
   return (
     <div className="sl-teacher-layout" style={{
       display: 'flex',
       minHeight: 'calc(100vh - 64px)',
       fontFamily: FONT,
-      background: `
-        radial-gradient(900px 480px at 100% -5%, rgba(124,58,237,0.13), transparent 60%),
-        radial-gradient(700px 420px at 30% 110%, rgba(45,212,191,0.08), transparent 60%),
-        radial-gradient(600px 380px at 70% 45%, rgba(236,72,153,0.05), transparent 60%),
-        #F6F4FD
-      `,
+      background: '#F8FAFC',
       width: '100%',
       overflowX: 'clip',
     }}>
 
       {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
       <aside className="sl-teacher-sidebar" style={{
-        width: 256,
+        width: 260,
         flexShrink: 0,
-        background: 'linear-gradient(180deg, #18233D 0%, #111B30 100%)',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
+        background: '#090D16',
+        borderRight: '1px solid #1E293B',
         position: 'sticky',
         top: 64,
         display: 'flex',
@@ -728,109 +711,193 @@ const TeacherDashboard: React.FC = () => {
         height: 'calc(100vh - 64px)',
         padding: '20px 14px',
         boxSizing: 'border-box',
-        gap: 20,
+        gap: 18,
         alignSelf: 'flex-start',
         overflowY: 'auto',
         color: '#FFFFFF',
       }}>
         {/* Brand block */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '4px 6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 6px 14px', borderBottom: '1px solid #1E293B' }}>
           <div style={{
-            width: 42, height: 42, borderRadius: 12, background: '#FFFFFF', padding: 4, flexShrink: 0,
+            width: 38, height: 38, borderRadius: 10, background: '#FFFFFF', padding: 4, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 8px 20px -8px rgba(129,140,248,0.8)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
           }}>
             <img src="/smartlearners-logo.png" alt="SmartLearners.ai" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Teacher Console</div>
-            <div style={{ marginTop: 1, fontSize: 10, fontWeight: 700, color: 'rgba(199,205,255,0.6)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              {user?.school_code || 'Smartlearners.ai'}
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.015em' }}>Smartlearners.ai</div>
+            <div style={{ marginTop: 2, fontSize: 11, fontWeight: 700, color: '#818CF8', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              {user?.school_code ? `School ${user.school_code}` : 'Teacher Portal'}
             </div>
           </div>
         </div>
 
-        {/* Quick stats */}
+        {/* Quick status bar */}
         <div style={{
-          padding: '14px 14px', borderRadius: 16,
-          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
-          display: 'grid', gap: 12,
+          padding: '12px 14px', borderRadius: 12,
+          background: 'linear-gradient(180deg, #111827 0%, #0F172A 100%)',
+          border: '1px solid #1F2937',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 800, color: 'rgba(199,205,255,0.6)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Students</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
-                {dashboardData.students.length}
-              </div>
+          <div>
+            <div style={{ fontSize: 10.5, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Assigned Cohort</div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: '#FFFFFF', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2, marginTop: 2 }}>
+              {dashboardData.students.length} Students
             </div>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 999,
-              background: 'rgba(16,185,129,0.16)', color: '#6EE7B7', fontSize: 10, fontWeight: 800,
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: 999, background: '#34D399', boxShadow: '0 0 0 3px rgba(52,211,153,0.2)' }} />
-              Live
-            </span>
           </div>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 9px', borderRadius: 999,
+            background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', color: '#34D399', fontSize: 11, fontWeight: 700,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }} />
+            Live
+          </span>
         </div>
 
-        {/* Nav */}
-        {navSections.map((section) => (
-        <div key={section.title}>
-          <div style={{ padding: '0 10px 8px', fontSize: 10, fontWeight: 800, color: 'rgba(199,205,255,0.45)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-            {section.title}
-          </div>
-          <nav style={{ display: 'grid', gap: 4 }}>
-            {section.items.map((item) => {
-              const isActive = activeTab === item.key;
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => handleNavClick(item.key)}
-                  style={{
-                    width: '100%',
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '9px 10px',
-                    borderRadius: 12,
-                    border: isActive ? '1px solid rgba(165,180,252,0.35)' : '1px solid transparent',
-                    position: 'relative',
-                    background: isActive ? '#4F46E5' : 'transparent',
-                    boxShadow: 'none',
-                    color: isActive ? '#FFFFFF' : 'rgba(226,232,255,0.72)',
-                    fontSize: 13.5,
-                    fontWeight: isActive ? 800 : 600,
-                    cursor: 'pointer',
-                    fontFamily: FONT,
-                    textAlign: 'left',
-                    transition: 'background 150ms, color 150ms',
-                  }}
-                  onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#FFFFFF'; } }}
-                  onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(226,232,255,0.72)'; } }}
-                >
-                  <span style={{
-                    width: 30, height: 30, borderRadius: 9,
-                    background: isActive ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.06)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <DashboardIcon name={item.icon} size={15} color={isActive ? '#FFFFFF' : 'rgba(199,205,255,0.75)'} />
-                  </span>
-                  <span style={{ flex: 1 }}>{item.label}</span>
-                  {isActive && <span style={{ width: 6, height: 6, borderRadius: 999, background: '#FDE68A', boxShadow: '0 0 10px #FDE68A' }} />}
-                </button>
-              );
-            })}
-          </nav>
+        {/* Grouped Nav */}
+        <div style={{ display: 'grid', gap: 18 }}>
+          {navSections.map((section) => (
+            <div key={section.title}>
+              <div style={{ padding: '0 10px 8px', fontSize: 10, fontWeight: 800, color: '#64748B', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                {section.title}
+              </div>
+              <nav style={{ display: 'grid', gap: 3 }}>
+                {section.items.map((item) => {
+                  const isActive = activeTab === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => handleNavClick(item.key)}
+                      style={{
+                        width: '100%',
+                        display: 'flex', alignItems: 'center', gap: 11,
+                        padding: '9px 12px',
+                        borderRadius: 10,
+                        border: 'none',
+                        borderLeft: isActive ? '3px solid #6366F1' : '3px solid transparent',
+                        background: isActive ? 'rgba(99,102,241,0.14)' : 'transparent',
+                        color: isActive ? '#FFFFFF' : '#94A3B8',
+                        fontSize: 13,
+                        fontWeight: isActive ? 700 : 500,
+                        cursor: 'pointer',
+                        fontFamily: FONT,
+                        textAlign: 'left',
+                        transition: 'all 120ms ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                          e.currentTarget.style.color = '#FFFFFF';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = '#94A3B8';
+                        }
+                      }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isActive ? '#818CF8' : '#64748B' }}>
+                        <DashboardIcon name={item.icon} size={16} color={isActive ? '#818CF8' : '#94A3B8'} />
+                      </span>
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
         </div>
-        ))}
+
+        {/* Teacher profile in sidebar footer */}
+        <div style={{
+          marginTop: 'auto', paddingTop: 14,
+          borderTop: '1px solid #1E293B',
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 10,
+            background: 'linear-gradient(135deg, #4F46E5, #6366F1)', color: '#FFFFFF',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 12.5, fontWeight: 800, flexShrink: 0,
+            boxShadow: '0 2px 8px rgba(79,70,229,0.3)',
+          }}>
+            {initials}
+          </div>
+          <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#FFFFFF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {displayName}
+            </div>
+            <div style={{ fontSize: 11, color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user?.school_code ? `Teacher · ${user.school_code}` : 'Educator'}
+            </div>
+          </div>
+        </div>
       </aside>
 
-
-      {/* ── Main area ────────────────────────────────────────────────────────── */}
+      {/* ── Main content area with sticky top bar ────────────────────────────── */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
+        
+        {/* Sticky Top Header Bar */}
+        <header style={{
+          position: 'sticky', top: 0, zIndex: 30,
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid #E2E8F0',
+          padding: '12px 28px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6, padding: '3px 8px', borderRadius: 6,
+              background: '#EEF2FF', color: '#4F46E5', fontSize: 11, fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase',
+            }}>
+              Workspace
+            </div>
+            <span style={{ color: '#CBD5E1', fontSize: 14 }}>/</span>
+            <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', letterSpacing: '-0.01em' }}>
+              {sectionTitles[activeTab]}
+            </span>
+            <span style={{ color: '#E2E8F0', margin: '0 2px' }}>·</span>
+            <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>
+              {formattedToday}
+            </span>
+          </div>
 
-        {/* Page content — each tab owns its own header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <button
+              onClick={() => {
+                setRefreshing(true);
+                loadDashboard();
+                if (activeTab === 'exam-correction' || activeTab === 'analytics') loadTeacherExams();
+                if (activeTab === 'mock-exams' || activeTab === 'mock-exam-analysis') loadMockExams();
+                setTimeout(() => setRefreshing(false), 800);
+              }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 14px', borderRadius: 8,
+                border: '1px solid #E2E8F0', background: '#FFFFFF',
+                color: '#334155', fontSize: 12, fontWeight: 700,
+                cursor: 'pointer', fontFamily: FONT,
+                boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                transition: 'all 120ms ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.borderColor = '#CBD5E1'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
+            >
+              <DashboardIcon name="refresh" size={13} color="#475569" />
+              {refreshing ? 'Syncing...' : 'Refresh'}
+            </button>
+          </div>
+        </header>
+
+        {/* Page content */}
         <div className="sl-teacher-content" style={{
-          padding: '28px',
+          padding: '24px 28px 40px',
           flex: 1, minWidth: 0, overflowX: 'hidden',
           position: 'relative',
         }}>
@@ -881,60 +948,98 @@ const TeacherDashboard: React.FC = () => {
         {/* ── Daily Quizzes ─────────────────────────────────────────────────── */}
         {activeTab === 'daily-quizzes' && (
             quizHomeworksLoading ? (
-              <div style={{ textAlign: 'center', padding: '48px 0' }}>
+              <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(15,23,42,0.03)' }}>
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
                   {[0, 1, 2].map((i) => (
-                    <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: C.teal, animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
+                    <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4F46E5', animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
                   ))}
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: C.textMuted }}>Loading quizzes...</p>
+                <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontWeight: 600 }}>Loading quizzes and assignments...</p>
               </div>
             ) : selectedHomeworkId !== null ? (
-              <div>
-                <button
-                  onClick={() => { setSelectedHomeworkId(null); setHomeworkSubmissions(null); }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px', padding: '7px 14px', borderRadius: '8px', border: `1px solid ${C.border}`, background: 'transparent', color: C.textSecondary, fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: FONT }}
-                >
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  Back to Quizzes
-                </button>
+              <div style={{ display: 'grid', gap: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => { setSelectedHomeworkId(null); setHomeworkSubmissions(null); }}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '8px',
+                      padding: '8px 16px', borderRadius: '10px', border: '1px solid #E2E8F0',
+                      background: '#FFFFFF', color: '#0F172A', fontSize: '13px', fontWeight: 700,
+                      cursor: 'pointer', fontFamily: FONT, boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                      transition: 'all 140ms ease',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.borderColor = '#CBD5E1'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
+                  >
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Back to All Quizzes
+                  </button>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>Total Submissions:</span>
+                    <span style={{ padding: '3px 10px', borderRadius: 8, background: '#EEF2FF', color: '#4F46E5', fontSize: 13, fontWeight: 800 }}>
+                      {homeworkSubmissions?.length ?? 0}
+                    </span>
+                  </div>
+                </div>
+
                 {homeworkSubmissionsLoading ? (
-                  <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                  <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
                       {[0, 1, 2].map((i) => (
-                        <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: C.teal, animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
+                        <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4F46E5', animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
                       ))}
                     </div>
-                    <p style={{ margin: 0, fontSize: '14px', color: C.textMuted }}>Loading submissions...</p>
+                    <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontWeight: 600 }}>Loading student submissions...</p>
                   </div>
                 ) : !homeworkSubmissions || homeworkSubmissions.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 0', color: C.textMuted, fontSize: '14px' }}>No submissions found for this quiz.</div>
+                  <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', color: '#64748B', fontSize: '14px' }}>
+                    No student submissions found for this quiz yet.
+                  </div>
                 ) : (
-                  <div style={{ background: C.card, borderRadius: '14px', border: `1px solid ${C.border}`, overflow: 'hidden', boxShadow: C.shadow }}>
-                    <div style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: '8px', background: C.cardAlt }}>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: C.text }}>
-                        {quizHomeworks?.find((h) => h.id === selectedHomeworkId)?.title ?? 'Quiz Submissions'}
-                      </span>
-                      <span style={{ padding: '2px 8px', borderRadius: '99px', background: C.tealSoft, fontSize: '11px', fontWeight: 700, color: C.teal }}>
-                        {homeworkSubmissions.length} submissions
-                      </span>
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 1px 3px rgba(15,23,42,0.03)' }}>
+                    <div style={{ padding: '18px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#F8FAFC' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.015em' }}>
+                          {quizHomeworks?.find((h) => h.id === selectedHomeworkId)?.title ?? 'Quiz Submissions'}
+                        </span>
+                        <span style={{ padding: '3px 10px', borderRadius: '6px', background: '#ECFDF5', border: '1px solid #A7F3D0', fontSize: '11.5px', fontWeight: 700, color: '#059669' }}>
+                          Evaluated Roster
+                        </span>
+                      </div>
                     </div>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: FONT }}>
                       <thead>
-                        <tr style={{ borderBottom: `1px solid ${C.border}`, background: C.cardAlt }}>
-                          {['Student', 'Class', 'Section', 'Submitted At'].map((h) => (
-                            <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                        <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
+                          {['Student Name', 'Class & Section', 'Submission Timestamp', 'Status'].map((h) => (
+                            <th key={h} style={{ padding: '12px 20px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {homeworkSubmissions.map((sub, i) => (
-                          <tr key={sub.id} style={{ borderBottom: i < homeworkSubmissions.length - 1 ? `1px solid ${C.border}` : 'none', background: i % 2 === 0 ? 'transparent' : C.cardAlt }}>
-                            <td style={{ padding: '12px 16px', fontWeight: 600, color: C.text }}>{sub.student_name}</td>
-                            <td style={{ padding: '12px 16px', color: C.textSecondary }}>{sub.class_name ?? '—'}</td>
-                            <td style={{ padding: '12px 16px', color: C.textSecondary }}>{sub.section_name ?? '—'}</td>
-                            <td style={{ padding: '12px 16px', color: C.textMuted, fontSize: '12px' }}>
-                              {sub.created_at ? new Date(sub.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                          <tr key={sub.id} style={{ borderBottom: i < homeworkSubmissions.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
+                            <td style={{ padding: '14px 20px', fontWeight: 700, color: '#0F172A' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#EEF2FF', color: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800 }}>
+                                  {sub.student_name ? sub.student_name[0].toUpperCase() : 'S'}
+                                </div>
+                                <span>{sub.student_name}</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px 20px', color: '#475569' }}>
+                              <span style={{ padding: '2px 8px', borderRadius: 6, background: '#F1F5F9', fontWeight: 600, fontSize: 12 }}>
+                                {sub.class_name ? `Class ${sub.class_name}` : '—'} {sub.section_name ? `· Sec ${sub.section_name}` : ''}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px 20px', color: '#64748B', fontSize: '12.5px', fontVariantNumeric: 'tabular-nums' }}>
+                              {sub.created_at ? new Date(sub.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                            </td>
+                            <td style={{ padding: '14px 20px' }}>
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 6, background: '#ECFDF5', color: '#059669', fontSize: 11.5, fontWeight: 700 }}>
+                                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
+                                Received
+                              </span>
                             </td>
                           </tr>
                         ))}
@@ -944,61 +1049,116 @@ const TeacherDashboard: React.FC = () => {
                 )}
               </div>
             ) : !quizHomeworks || quizHomeworks.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: C.textMuted, fontSize: '14px' }}>No quizzes found.</div>
+              <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', color: '#64748B', fontSize: '14px' }}>
+                No daily quizzes scheduled.
+              </div>
             ) : (
-              <div style={{ background: C.card, borderRadius: '14px', border: `1px solid ${C.border}`, overflow: 'hidden', boxShadow: C.shadow }}>
-                <div style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: '8px', background: C.cardAlt }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: C.text }}>Daily MCQ Quizzes</span>
-                  <span style={{ padding: '2px 8px', borderRadius: '99px', background: C.tealSoft, fontSize: '11px', fontWeight: 700, color: C.teal }}>{quizHomeworks.length}</span>
+              <div style={{ display: 'grid', gap: 18 }}>
+                {/* Header card */}
+                <div style={{
+                  background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', padding: '22px 24px',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
+                }}>
+                  <div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '3px 10px', borderRadius: 999, background: '#EEF2FF', color: '#4F46E5', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 6 }}>
+                      Formative Quizzes
+                    </div>
+                    <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                      Daily MCQ Quizzes & Assessments
+                    </h2>
+                    <p style={{ margin: '4px 0 0', fontSize: 13, color: '#64748B' }}>
+                      Assigned diagnostic multiple-choice question assessments. Click any quiz to inspect student submissions.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>Active Modules:</span>
+                    <span style={{ padding: '4px 12px', borderRadius: 8, background: '#EEF2FF', color: '#4F46E5', fontSize: 13, fontWeight: 800 }}>
+                      {quizHomeworks.length} Quizzes
+                    </span>
+                  </div>
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: FONT }}>
-                  <thead>
-                    <tr style={{ borderBottom: `1px solid ${C.border}`, background: C.cardAlt }}>
-                      {['Title', 'Subject', 'Chapters', 'Assigned', 'Due', 'Submissions'].map((h) => (
-                        <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {quizHomeworks.map((hw, i) => {
-                      const dd = hw.description_data;
-                      const subject = dd?.subject_name ?? dd?.subject ?? '—';
-                      const chapters = dd?.chapters ?? [];
-                      return (
-                        <tr
-                          key={hw.id}
-                          onClick={() => loadHomeworkSubmissions(hw.id)}
-                          style={{ borderBottom: i < quizHomeworks.length - 1 ? `1px solid ${C.border}` : 'none', background: i % 2 === 0 ? 'transparent' : C.cardAlt, cursor: 'pointer' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = C.tealSoft)}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : C.cardAlt)}
-                        >
-                          <td style={{ padding: '12px 16px', fontWeight: 600, color: C.text }}>{hw.title ?? hw.homework_code ?? `Quiz #${hw.id}`}</td>
-                          <td style={{ padding: '12px 16px', color: C.textSecondary }}>{subject}</td>
-                          <td style={{ padding: '12px 16px' }}>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                              {chapters.slice(0, 2).map((ch) => (
-                                <span key={ch} style={{ padding: '2px 8px', borderRadius: '99px', background: C.tealSoft, color: C.teal, fontSize: '11px', fontWeight: 600 }}>
-                                  {ch.replace(/_/g, ' ')}
-                                </span>
-                              ))}
-                              {chapters.length > 2 && <span style={{ padding: '2px 8px', borderRadius: '99px', background: C.cardAlt, color: C.textMuted, fontSize: '11px' }}>+{chapters.length - 2}</span>}
-                              {chapters.length === 0 && <span style={{ color: C.textMuted }}>—</span>}
-                            </div>
-                          </td>
-                          <td style={{ padding: '12px 16px', color: C.textSecondary, fontSize: '12px' }}>
-                            {hw.date_assigned ? new Date(hw.date_assigned).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                          </td>
-                          <td style={{ padding: '12px 16px', color: C.textSecondary, fontSize: '12px' }}>
-                            {hw.due_date ? new Date(hw.due_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                          </td>
-                          <td style={{ padding: '12px 16px' }}>
-                            <span style={{ fontWeight: 700, color: C.teal, fontSize: '14px' }}>{hw.total_submissions}</span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+
+                {/* Quizzes Table Card */}
+                <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 1px 3px rgba(15,23,42,0.03)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: FONT }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
+                        {['Quiz Title', 'Subject', 'Covered Chapters', 'Assigned Date', 'Due Date', 'Submissions', 'Actions'].map((h, i) => (
+                          <th key={h} style={{ padding: '12px 18px', textAlign: i === 6 ? 'right' : 'left', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {quizHomeworks.map((hw, i) => {
+                        const dd = hw.description_data;
+                        const subject = dd?.subject_name ?? dd?.subject ?? '—';
+                        const chapters = dd?.chapters ?? [];
+                        return (
+                          <tr
+                            key={hw.id}
+                            onClick={() => loadHomeworkSubmissions(hw.id)}
+                            style={{
+                              borderBottom: i < quizHomeworks.length - 1 ? '1px solid #F1F5F9' : 'none',
+                              cursor: 'pointer',
+                              transition: 'background 120ms ease',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <td style={{ padding: '14px 18px', fontWeight: 700, color: '#0F172A' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <span>{hw.title ?? hw.homework_code ?? `Quiz #${hw.id}`}</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px 18px' }}>
+                              <span style={{ padding: '3px 8px', borderRadius: 6, background: '#EEF2FF', color: '#4F46E5', fontWeight: 700, fontSize: 12 }}>
+                                {subject}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px 18px' }}>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                {chapters.slice(0, 2).map((ch) => (
+                                  <span key={ch} style={{ padding: '2px 8px', borderRadius: '6px', background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#334155', fontSize: '11.5px', fontWeight: 600 }}>
+                                    {ch.replace(/_/g, ' ')}
+                                  </span>
+                                ))}
+                                {chapters.length > 2 && (
+                                  <span style={{ padding: '2px 8px', borderRadius: '6px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', fontSize: '11px', fontWeight: 600 }}>
+                                    +{chapters.length - 2} more
+                                  </span>
+                                )}
+                                {chapters.length === 0 && <span style={{ color: '#94A3B8' }}>—</span>}
+                              </div>
+                            </td>
+                            <td style={{ padding: '14px 18px', color: '#64748B', fontSize: '12.5px', fontVariantNumeric: 'tabular-nums' }}>
+                              {hw.date_assigned ? new Date(hw.date_assigned).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                            </td>
+                            <td style={{ padding: '14px 18px', color: '#64748B', fontSize: '12.5px', fontVariantNumeric: 'tabular-nums' }}>
+                              {hw.due_date ? new Date(hw.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                            </td>
+                            <td style={{ padding: '14px 18px' }}>
+                              <span style={{ fontWeight: 800, color: '#4F46E5', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>
+                                {hw.total_submissions}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); loadHomeworkSubmissions(hw.id); }}
+                                style={{
+                                  padding: '5px 12px', borderRadius: 8, border: '1px solid #E2E8F0',
+                                  background: '#FFFFFF', color: '#4F46E5', fontSize: 12, fontWeight: 700,
+                                  cursor: 'pointer', fontFamily: FONT,
+                                }}
+                              >
+                                Submissions &rarr;
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )
           )}
@@ -1081,90 +1241,125 @@ const TeacherDashboard: React.FC = () => {
         {/* ── Activity ─────────────────────────────────────────────────────── */}
         {activeTab === 'activity' && (
           activityLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px 0' }}>
+            <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0' }}>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
-                {[0, 1, 2].map((i) => <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: C.green, animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />)}
+                {[0, 1, 2].map((i) => <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />)}
               </div>
-              <p style={{ margin: 0, fontSize: '14px', color: C.textMuted }}>Loading activity...</p>
+              <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontWeight: 600 }}>Loading activity stream...</p>
             </div>
           ) : activityData ? <ActivityFeed data={activityData} /> : (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: C.textMuted, fontSize: '14px' }}>No activity data available.</div>
+            <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', color: '#64748B', fontSize: '14px' }}>
+              No learning activity recorded yet.
+            </div>
           )
         )}
 
         {/* ── Pre-Assessment ───────────────────────────────────────────────── */}
         {activeTab === 'pre-assessment' && (
             testPrepLoading ? (
-              <div style={{ textAlign: 'center', padding: '48px 0' }}>
+              <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(15,23,42,0.03)' }}>
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
                   {[0, 1, 2].map((i) => (
-                    <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: C.teal, animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
+                    <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4F46E5', animation: `dot-pulse 1.4s ease-in-out ${i * 0.16}s infinite` }} />
                   ))}
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: C.textMuted }}>Loading pre-assessment data...</p>
+                <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontWeight: 600 }}>Loading spot check & diagnostic records...</p>
               </div>
             ) : (
-              <div>
+              <div style={{ display: 'grid', gap: 18 }}>
+                {/* Header Banner */}
+                <div style={{
+                  background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', padding: '22px 24px',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
+                }}>
+                  <div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '3px 10px', borderRadius: 999, background: '#EEF2FF', color: '#4F46E5', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 6 }}>
+                      Diagnostic Records
+                    </div>
+                    <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                      Spot Check & Diagnostic History
+                    </h2>
+                    <p style={{ margin: '4px 0 0', fontSize: 13, color: '#64748B' }}>
+                      Review chapter mastery, peak test prep scores, and student assessment frequencies.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>Matching Cohort:</span>
+                    <span style={{ padding: '4px 12px', borderRadius: 8, background: '#EEF2FF', color: '#4F46E5', fontSize: 13, fontWeight: 800 }}>
+                      {prepFilteredStudents.length} Students
+                    </span>
+                  </div>
+                </div>
+
                 {/* Filter bar */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end', justifyContent: 'space-between', padding: '16px 20px', background: C.card, borderRadius: '14px', border: `1px solid ${C.border}`, marginBottom: '16px', boxShadow: C.shadow }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
-                    <div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>Chapter</div>
-                      <select value={prepChapterFilter} onChange={(e) => setPrepChapterFilter(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: `1.5px solid ${C.border}`, background: C.card, color: C.text, fontSize: '13px', fontFamily: FONT, cursor: 'pointer', minWidth: '160px' }}>
+                <div style={{
+                  display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '14px 20px', background: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.03)',
+                }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Topic</span>
+                      <select value={prepChapterFilter} onChange={(e) => setPrepChapterFilter(e.target.value)} style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: '12.5px', fontFamily: FONT, cursor: 'pointer', outline: 'none' }}>
                         {prepChapterOptions.map((o) => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>Min Attempts</div>
-                      <select value={prepMinAttempts} onChange={(e) => setPrepMinAttempts(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', border: `1.5px solid ${C.border}`, background: C.card, color: C.text, fontSize: '13px', fontFamily: FONT, cursor: 'pointer' }}>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Min Attempts</span>
+                      <select value={prepMinAttempts} onChange={(e) => setPrepMinAttempts(Number(e.target.value))} style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: '12.5px', fontFamily: FONT, cursor: 'pointer', outline: 'none' }}>
                         {[1, 2, 3, 5, 10].map((n) => <option key={n} value={n}>{n}+</option>)}
                       </select>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>Score Greater Than</div>
-                      <select value={prepMinScore} onChange={(e) => setPrepMinScore(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', border: `1.5px solid ${C.border}`, background: C.card, color: C.text, fontSize: '13px', fontFamily: FONT, cursor: 'pointer' }}>
-                        <option value={0}>Any score</option>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Min Score</span>
+                      <select value={prepMinScore} onChange={(e) => setPrepMinScore(Number(e.target.value))} style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: '12.5px', fontFamily: FONT, cursor: 'pointer', outline: 'none' }}>
+                        <option value={0}>Any Score</option>
                         {[40, 50, 60, 70, 80, 90].map((n) => <option key={n} value={n}>{n}%</option>)}
                       </select>
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
-                    <div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>Class</div>
-                      <select value={prepClassFilter} onChange={(e) => { setPrepClassFilter(e.target.value); setPrepSectionFilter('All'); }} style={{ padding: '8px 12px', borderRadius: '8px', border: `1.5px solid ${C.border}`, background: C.card, color: C.text, fontSize: '13px', fontFamily: FONT, cursor: 'pointer', minWidth: '100px' }}>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Class</span>
+                      <select value={prepClassFilter} onChange={(e) => { setPrepClassFilter(e.target.value); setPrepSectionFilter('All'); }} style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: '12.5px', fontFamily: FONT, cursor: 'pointer', outline: 'none' }}>
                         {prepClassOptions.map((o) => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>Section</div>
-                      <select value={prepSectionFilter} onChange={(e) => setPrepSectionFilter(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: `1.5px solid ${C.border}`, background: C.card, color: C.text, fontSize: '13px', fontFamily: FONT, cursor: 'pointer', minWidth: '100px' }}>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Section</span>
+                      <select value={prepSectionFilter} onChange={(e) => setPrepSectionFilter(e.target.value)} style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#0F172A', fontSize: '12.5px', fontFamily: FONT, cursor: 'pointer', outline: 'none' }}>
                         {prepSectionOptions.map((o) => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '13px', color: C.textSecondary }}>
-                        <span style={{ fontWeight: 700, color: C.teal, fontSize: '16px' }}>{prepFilteredStudents.length}</span> match
-                      </span>
-                      <button
-                        onClick={() => { setPrepChapterFilter('All'); setPrepClassFilter('All'); setPrepSectionFilter('All'); setPrepMinAttempts(1); setPrepMinScore(0); }}
-                        style={{ padding: '7px 14px', borderRadius: '8px', border: `1px solid ${C.border}`, background: 'transparent', color: C.textSecondary, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: FONT }}
-                      >
-                        Reset
-                      </button>
-                    </div>
                   </div>
+
+                  <button
+                    onClick={() => { setPrepChapterFilter('All'); setPrepClassFilter('All'); setPrepSectionFilter('All'); setPrepMinAttempts(1); setPrepMinScore(0); }}
+                    style={{
+                      padding: '7px 14px', borderRadius: '8px', border: '1px solid #E2E8F0',
+                      background: '#F8FAFC', color: '#475569', fontSize: '12px', fontWeight: 600,
+                      cursor: 'pointer', fontFamily: FONT,
+                    }}
+                  >
+                    Reset Filters
+                  </button>
                 </div>
 
                 {/* Pre-Assessment Table */}
                 {prepFilteredStudents.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 0', color: C.textMuted, fontSize: '14px' }}>No students match the selected filters.</div>
+                  <div style={{ textAlign: 'center', padding: '64px 0', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0', color: '#64748B', fontSize: '14px' }}>
+                    No student diagnostic attempts match the selected criteria.
+                  </div>
                 ) : (
-                  <div style={{ background: C.card, borderRadius: '14px', border: `1px solid ${C.border}`, overflow: 'hidden', boxShadow: C.shadow }}>
+                  <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 1px 3px rgba(15,23,42,0.03)' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: FONT }}>
                       <thead>
-                        <tr style={{ borderBottom: `1px solid ${C.border}`, background: C.cardAlt }}>
-                          {['Student', 'Class', 'Chapters', 'Attempts', 'Best Score', 'Avg Score', 'Last Attempt'].map((h) => (
-                            <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                        <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
+                          {['Student', 'Class', 'Tested Chapters', 'Attempts', 'Peak Score', 'Average Performance', 'Recent Attempt'].map((h) => (
+                            <th key={h} style={{ padding: '12px 18px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
                           ))}
                         </tr>
                       </thead>
@@ -1182,36 +1377,56 @@ const TeacherDashboard: React.FC = () => {
                           const classLabel = items[0]?.class_name ?? student.grade ?? '—';
 
                           return (
-                            <tr key={student.student_id} style={{ borderBottom: i < prepFilteredStudents.length - 1 ? `1px solid ${C.border}` : 'none', background: i % 2 === 0 ? 'transparent' : C.cardAlt }}>
-                              <td style={{ padding: '12px 16px' }}>
+                            <tr key={student.student_id} style={{ borderBottom: i < prepFilteredStudents.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
+                              <td style={{ padding: '14px 18px' }}>
                                 <button onClick={() => setViewStudentId(student.student_id)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}>
-                                  <div style={{ fontWeight: 600, color: C.text }}>{student.full_name}</div>
-                                  <div style={{ fontSize: '11px', color: C.textMuted, marginTop: '2px' }}>{student.section ?? ''}</div>
+                                  <div style={{ fontWeight: 700, color: '#0F172A', fontSize: 13.5 }}>{student.full_name}</div>
+                                  <div style={{ fontSize: '11.5px', color: '#64748B', marginTop: '2px' }}>{student.section ? `Section ${student.section}` : student.email}</div>
                                 </button>
                               </td>
-                              <td style={{ padding: '12px 16px', color: C.textSecondary }}>{classLabel}</td>
-                              <td style={{ padding: '12px 16px' }}>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                              <td style={{ padding: '14px 18px' }}>
+                                <span style={{ padding: '3px 8px', borderRadius: 6, background: '#F1F5F9', fontWeight: 700, color: '#0F172A', fontSize: 12 }}>
+                                  {classLabel}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 18px' }}>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                   {chapters.slice(0, 3).map((ch) => (
-                                    <span key={ch} style={{ padding: '2px 8px', borderRadius: '99px', background: C.tealSoft, color: C.teal, fontSize: '11px', fontWeight: 600, whiteSpace: 'nowrap' }}>{ch}</span>
+                                    <span key={ch} style={{ padding: '2px 8px', borderRadius: '6px', background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#334155', fontSize: '11px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                      {ch}
+                                    </span>
                                   ))}
-                                  {chapters.length > 3 && <span style={{ padding: '2px 8px', borderRadius: '99px', background: C.cardAlt, color: C.textMuted, fontSize: '11px' }}>+{chapters.length - 3}</span>}
+                                  {chapters.length > 3 && (
+                                    <span style={{ padding: '2px 8px', borderRadius: '6px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', fontSize: '11px', fontWeight: 600 }}>
+                                      +{chapters.length - 3}
+                                    </span>
+                                  )}
                                 </div>
                               </td>
-                              <td style={{ padding: '12px 16px', fontWeight: 700, color: C.text }}>{items.length}</td>
-                              <td style={{ padding: '12px 16px' }}>
-                                <span style={{ fontWeight: 700, color: scoreColor(bestScore), fontSize: '14px' }}>{bestScore}%</span>
+                              <td style={{ padding: '14px 18px', fontWeight: 800, color: '#0F172A', fontVariantNumeric: 'tabular-nums' }}>
+                                {items.length}
                               </td>
-                              <td style={{ padding: '12px 16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <div style={{ flex: 1, height: '5px', borderRadius: '99px', background: C.cardAlt, minWidth: '60px' }}>
-                                    <div style={{ width: `${avgScore}%`, height: '100%', borderRadius: '99px', background: scoreColor(avgScore) }} />
+                              <td style={{ padding: '14px 18px' }}>
+                                <span style={{
+                                  display: 'inline-block', padding: '3px 8px', borderRadius: 6,
+                                  background: bestScore >= 70 ? '#ECFDF5' : bestScore >= 50 ? '#FFFBEB' : '#FFF1F2',
+                                  color: scoreColor(bestScore), fontWeight: 800, fontSize: '13px', fontVariantNumeric: 'tabular-nums',
+                                }}>
+                                  {bestScore}%
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 18px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                  <div style={{ flex: 1, height: '6px', borderRadius: '999px', background: '#F1F5F9', minWidth: '70px', overflow: 'hidden' }}>
+                                    <div style={{ width: `${avgScore}%`, height: '100%', borderRadius: '999px', background: scoreColor(avgScore) }} />
                                   </div>
-                                  <span style={{ fontWeight: 600, color: scoreColor(avgScore), minWidth: '32px' }}>{avgScore}%</span>
+                                  <span style={{ fontWeight: 700, color: scoreColor(avgScore), minWidth: '36px', fontVariantNumeric: 'tabular-nums' }}>
+                                    {avgScore}%
+                                  </span>
                                 </div>
                               </td>
-                              <td style={{ padding: '12px 16px', color: C.textMuted, fontSize: '12px' }}>
-                                {lastAttempt ? new Date(lastAttempt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                              <td style={{ padding: '14px 18px', color: '#64748B', fontSize: '12px', fontVariantNumeric: 'tabular-nums' }}>
+                                {lastAttempt ? new Date(lastAttempt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                               </td>
                             </tr>
                           );

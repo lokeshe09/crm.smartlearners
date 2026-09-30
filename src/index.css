@@ -286,40 +286,88 @@
 .sl-worksheet-card button { background: #4F46E5 !important; box-shadow: none !important; }
 .sl-workspace-header {
   position: relative;
-  isolation: isolate;
-  padding: 28px 30px;
-  border: 1px solid #303C61;
-  border-radius: 20px;
-  background: radial-gradient(ellipse at 96% 0%, #554994 0%, transparent 55%), linear-gradient(115deg, #14213D, #29335A);
-  box-shadow: 0 12px 28px -20px #152546;
+  padding: 24px 28px;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.02);
   overflow: hidden;
 }
 .sl-workspace-header::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  opacity: .15;
-  background-image: linear-gradient(#FFFFFF24 1px, transparent 1px), linear-gradient(90deg, #FFFFFF24 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: linear-gradient(90deg, transparent 45%, black);
+  display: none;
 }
-.sl-workspace-header h1 { color: #FFFFFF; font-size: clamp(24px, 2.3vw, 32px); letter-spacing: -.04em; }
-.sl-workspace-header p { color: #CFD6EB; max-width: 660px; line-height: 1.8; }
-.sl-workspace-eyebrow { color: #C3BBFF; letter-spacing: .16em; font-size: 9px; margin-bottom: 10px; }
-.sl-workspace-header .sl-header-count { background: #FFFFFF0D; border-color: #FFFFFF29; padding: 18px 22px; }
-.sl-workspace-header .sl-header-count strong { color: #FFFFFF; font-size: 32px; }
-.sl-workspace-header .sl-header-count span { color: #CFD6EB; }
-.sl-workspace-header .sl-header-date, .sl-workspace-header .sl-header-back { background: #FFFFFF0F; border-color: #FFFFFF30; color: #F0F2FC; }
-.sl-workspace-header .sl-header-chip { background: #FFFFFF15; color: #E2E7F7; border: 1px solid #FFFFFF20; }
-.sl-exam-card, .sl-worksheet-card { border-radius: 18px !important; border-color: #DEE4EF !important; box-shadow: 0 4px 18px -8px #263D6424 !important; }
-.sl-exam-card-heading { background: linear-gradient(115deg, #F2F3FF, #FBFCFF) !important; padding: 22px !important; }
-.sl-exam-card-heading div[title] { font-size: 17px !important; letter-spacing: -.025em; }
-.sl-exam-card button, .sl-worksheet-card button { min-height: 42px; font-weight: 700 !important; background: linear-gradient(110deg, #5342CD, #6A52DA) !important; border-radius: 10px !important; }
-.sl-exam-card button:hover, .sl-worksheet-card button:hover { filter: brightness(1.07); }
-.sl-chart-title { font-size: 18px; }
-.sl-chart-eyebrow { color: #6758BC; }
+.sl-workspace-header h1 {
+  color: #0F172A;
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.sl-workspace-header p {
+  color: #475569;
+  max-width: 720px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+.sl-workspace-eyebrow {
+  color: #4F46E5;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.sl-workspace-header .sl-header-count {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 18px;
+}
+.sl-workspace-header .sl-header-count strong {
+  color: #0F172A;
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+.sl-workspace-header .sl-header-count span {
+  color: #64748B;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sl-workspace-header .sl-header-date,
+.sl-workspace-header .sl-header-back {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  color: #334155;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+.sl-workspace-header .sl-header-back:hover {
+  background: #EEF2FF;
+  border-color: #C7D2FE;
+  color: #4338CA;
+}
+.sl-workspace-header .sl-header-chip {
+  background: #F1F5F9;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+}
+.sl-exam-card, .sl-worksheet-card { border-radius: 14px !important; border-color: #E2E8F0 !important; box-shadow: 0 1px 3px rgba(15,23,42,0.05) !important; background: #FFFFFF !important; }
+.sl-exam-card-heading { background: #F8FAFC !important; padding: 18px 20px !important; border-bottom: 1px solid #E2E8F0 !important; }
+.sl-exam-card-heading div[title] { font-size: 15px !important; font-weight: 700 !important; color: #0F172A !important; letter-spacing: -0.015em; }
+.sl-exam-card button, .sl-worksheet-card button { min-height: 38px; font-weight: 600 !important; background: #4F46E5 !important; border-radius: 8px !important; }
+.sl-exam-card button:hover, .sl-worksheet-card button:hover { background: #4338CA !important; }
+.sl-chart-title { font-size: 17px; font-weight: 700; color: #0F172A; }
+.sl-chart-eyebrow { color: #64748B; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
 .sl-dashboard .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 
 /* Rich text (may contain LaTeX): wrap long words/formulas instead of spilling out of the box */

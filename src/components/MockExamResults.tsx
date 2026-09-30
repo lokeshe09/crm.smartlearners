@@ -26,23 +26,23 @@ interface MockExamResultsProps {
 
 const C = {
   card: '#FFFFFF',
-  cardAlt: '#F5F3FF',
+  cardAlt: '#F8FAFC',
   border: '#E2E8F0',
   text: '#0F172A',
   textSecondary: '#475569',
   textMuted: '#64748B',
-  purple: '#7C3AED',
-  purpleDark: '#6D28D9',
-  purpleSoft: 'rgba(124,58,237,0.10)',
-  blue: '#3B82F6',
+  purple: '#4F46E5',
+  purpleDark: '#4338CA',
+  purpleSoft: 'rgba(79,70,229,0.08)',
+  blue: '#0284C7',
   green: '#10B981',
   greenSoft: 'rgba(16,185,129,0.12)',
   amber: '#F59E0B',
   amberSoft: 'rgba(245,158,11,0.12)',
   red: '#F43F5E',
   redSoft: 'rgba(244,63,94,0.12)',
-  shadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.05)',
-  shadowLg: '0 8px 32px rgba(0,0,0,0.14)',
+  shadow: '0 1px 3px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.02)',
+  shadowLg: '0 8px 32px rgba(15,23,42,0.08)',
 };
 
 const scoreColor = (s: number) => s >= 70 ? C.green : s >= 50 ? C.amber : C.red;

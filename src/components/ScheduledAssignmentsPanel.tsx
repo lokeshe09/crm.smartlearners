@@ -8,13 +8,13 @@ const SANS  = '"Plus Jakarta Sans", system-ui, sans-serif';
 const C = {
   border: '#E2E8F0',
   text: '#0F172A', textSecondary: '#475569', textMuted: '#64748B',
-  teal: '#7C3AED', tealSoft: 'rgba(124,58,237,0.10)',
+  teal: '#4F46E5', tealSoft: 'rgba(79,70,229,0.08)',
   green: '#10B981', greenSoft: 'rgba(16,185,129,0.12)',
   amber: '#F59E0B', amberSoft: 'rgba(245,158,11,0.12)',
   red: '#F43F5E', redSoft: 'rgba(244,63,94,0.12)',
-  blue: '#3B82F6', blueSoft: 'rgba(59,130,246,0.10)',
+  blue: '#0284C7', blueSoft: 'rgba(2,132,199,0.08)',
   slate: '#94A3B8', slateSoft: 'rgba(148,163,184,0.12)',
-  card: '#FFFFFF', cardAlt: '#F5F3FF', pageBg: '#F8FAFC',
+  card: '#FFFFFF', cardAlt: '#F8FAFC', pageBg: '#F8FAFC',
   shadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.05)',
   shadowMd: '0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
 };

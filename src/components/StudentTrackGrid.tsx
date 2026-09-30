@@ -34,13 +34,13 @@ function normalizeChapterName(name: string): string {
 }
 
 const C = {
-  bg: '#EDE9FE', card: '#FFFFFF', cardAlt: '#F5F3FF',
+  bg: '#F8FAFC', card: '#FFFFFF', cardAlt: '#F8FAFC',
   border: '#E2E8F0', borderStrong: '#CBD5E1',
   text: '#0F172A', textSecondary: '#475569', textMuted: '#64748B',
-  teal: '#7C3AED', tealSoft: 'rgba(124,58,237,0.10)',
-  blue: '#3B82F6', blueSoft: 'rgba(59,130,246,0.10)',
-  shadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.05)',
-  shadowLg: '0 4px 6px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.08)',
+  teal: '#4F46E5', tealSoft: 'rgba(79,70,229,0.08)',
+  blue: '#0284C7', blueSoft: 'rgba(2,132,199,0.08)',
+  shadow: '0 1px 3px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.02)',
+  shadowLg: '0 8px 24px rgba(15,23,42,0.08), 0 2px 6px rgba(15,23,42,0.04)',
 };
 
 export interface TrackPreloadData {
